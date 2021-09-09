@@ -1,24 +1,22 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from ddtrace import Pin, patch
-# from flask_pymongo import PyMongo
 import pymongo
 from pprint import pprint
 import sys
+import ddtrace.profiling.auto
 
 # configuration
 DEBUG = True
-patch(pymongo=True)
 
 # instantiate the app
 app = Flask(__name__)
 app.config.from_object(__name__)
-# app.config["MONGO_URI"] = "mongodb://root:example@localhost:27017/sitecontent?authSource=admin"
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
 # mongo=PyMongo(app)
 client = pymongo.MongoClient('mongodb://root:example@localhost:27017/sitecontent?authSource=admin')
-# client = MongoClient('mongodb://localhost:27017/')
+
 
 
 # sanity check route
@@ -39,10 +37,6 @@ def all_cards():
         cards_dict[index] = document
     print(type(cards_dict), file=sys.stderr)
     return (cards_dict)
-    # return jsonify({
-    #     'status': 'success',
-    #     'books': 'BOOKS',
-    # })
 
 
 if __name__ == '__main__':
