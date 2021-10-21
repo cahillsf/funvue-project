@@ -4,10 +4,18 @@ from ddtrace import Pin, patch
 import pymongo
 from pprint import pprint
 import sys
-import ddtrace.profiling.auto
+#import ddtrace.profiling.auto
+from ddtrace.profiling.profiler import Profiler
+
 
 # configuration
 DEBUG = True
+prof = Profiler(
+    env="dev",  # if not specified, falls back to environment variable DD_ENV
+    service="flask-server",  # if not specified, falls back to environment variable DD_SERVICE
+    version="0.0.1",   # if not specified, falls back to environment variable DD_VERSION
+)
+prof.start()
 
 # instantiate the app
 app = Flask(__name__)
