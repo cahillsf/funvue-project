@@ -17,3 +17,8 @@ Using Datadog products APM, Continous Profiler, and RUM
 ## Front end: Vue
 * from funvue directory: `npm run dev` to start the development server
 * website will be running at http://localhost:8080
+
+## Requirements: 
+* python 3 - https://www.python.org/downloads/
+* docker desktop - https://docs.docker.com/get-docker/
+* Vue cli - https://cli.vuejs.org/
