@@ -10,6 +10,7 @@
         <router-link to="/nextpage">Next Page Please</router-link>
       </li>
     </ul>
+    
     <div id="mainGrid">
       <!-- loop through cards in js -->
       <vk-card v-for="card in cards" v-bind:key="card.id" v-bind:style="card.style" :data-aos="card.animation">
@@ -52,9 +53,9 @@ export default {
       doSomething() {
         this.getCards();
       },
-      nextPage() {
-        this.$router.push('AnotherPage')
-      },
+      // nextPage() {
+      //   this.$router.push('AnotherPage')
+      // },
       generateCards() {
         //mainCards are the cards received from calling function getCards()
         let keys = Object.keys(this.mainCards);
@@ -62,6 +63,7 @@ export default {
         //cards on alternate sides of the webpage with corresponding animation
         keys.forEach(key => {
           let i = parseInt(key) + 1;
+          console.log("i: "+i);
           //define the the style properties object
           let curProps = {
             gridColumn: 0,
@@ -83,6 +85,7 @@ export default {
           curCard['style'] = curProps;
           //add complete card to cards array
           this.cards.push(curCard);
+          console.log(curCard);
         })
         console.log(this.cards);
       },
