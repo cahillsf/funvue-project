@@ -1,15 +1,21 @@
-db.createUser({
-    user: 'flask-role',
-    pwd: 'toor',
-    roles: [
-      {
-        role: 'dbAdmin',
-        db: 'sitecontent',
-      },
-    ],
-  });
 db = new Mongo().getDB("sitecontent");
+db.createUser({
+  user: 'flask-role',
+  pwd: 'toor',
+  roles: [
+    {
+      role: 'dbAdmin',
+      db: 'sitecontent',
+    },
+    {
+      role: 'readWrite',
+      db: 'sitecontent',
+    },
+  ],
+});
 db.createCollection('cards');
+db.createCollection('users');
+
 // var myCards=
 // 	[
 // 		{
