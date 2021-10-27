@@ -7,8 +7,10 @@
                 <input class="uk-textarea" type="text"  placeholder="Email" v-model="email">
                 <input class="uk-textarea" type="text" placeholder="Password" v-model="password">
             </form>
+            <router-link to="/createaccount">
+              <vk-button>Create Account</vk-button>
+            </router-link>
             <vk-button @click="submitCreds">Submit</vk-button>
-
         </vk-modal>
     </div>
 </template>
