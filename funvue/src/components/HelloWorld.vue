@@ -10,6 +10,7 @@
         <router-link to="/nextpage">Next Page Please</router-link>
       </li>
     </ul>
+    
     <div id="mainGrid">
       <!-- loop through cards in js -->
       <vk-card v-for="card in cards" v-bind:key="card.id" v-bind:style="card.style" :data-aos="card.animation">
@@ -52,37 +53,33 @@ export default {
       doSomething() {
         this.getCards();
       },
-      nextPage() {
-        this.$router.push('AnotherPage')
-      },
       generateCards() {
         //mainCards are the cards received from calling function getCards()
+
         let keys = Object.keys(this.mainCards);
+
         //loop through the provided cards adding the proper css to display
         //cards on alternate sides of the webpage with corresponding animation
-        keys.forEach(key => {
+        keys.forEach(key => {  
           let i = parseInt(key) + 1;
           //define the the style properties object
           let curProps = {
             gridColumn: 0,
             gridRow: 0
           }
-          let curCard = this.mainCards[i - 1];
+          let curCard = Object.values(this.mainCards).find(el => el._id === parseInt(key));
+          console.log(curCard);
           //grid row will correspond the index of the loop
           //as cards are displayed straight down the page
           curProps['gridRow'] = i;
           //column alternates page sides
           //even numbers on the right odd numbers on the left
-          if(i % 2 == 0){
-            curProps['gridColumn'] = 2;
-          }
-          else{
-            curProps['gridColumn'] = 1;
-          }
+          curProps['gridColumn'] = (i % 2 == 0)? 2 : 1;
           //assign grid props to card object
           curCard['style'] = curProps;
           //add complete card to cards array
           this.cards.push(curCard);
+          console.log(curCard);
         })
         console.log(this.cards);
       },

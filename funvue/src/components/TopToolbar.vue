@@ -4,16 +4,21 @@
         <div class="spacer"></div>
         <vk-button size="small" class="menu-button" type="primary">500</vk-button>
         <vk-button size="small" class="menu-button" type="primary">400</vk-button>
-        <vk-button size="small" class="menu-button" type="primary" @click="doSomething">L</vk-button>
+        <vk-button size="small" class="menu-button" type="primary" @click="doSomething">doSomething</vk-button>
+        <vk-button size="small" class="menu-button" type="primary" @click="$refs.childModal.showModal()">Login</vk-button>
+        <login-modal ref="childModal"></login-modal>
     </div>
+
 </template>
 
 <script>
 import '@vuikit/theme';
 import { Button, ButtonLink} from '../../node_modules/vuikit/lib/button';
+import LoginModal from './LoginModal.vue'
 export default {
   name: 'TopToolbar',
   components: {
+      LoginModal,
       VkButton: Button,
       VkButtonLink: ButtonLink
   },
