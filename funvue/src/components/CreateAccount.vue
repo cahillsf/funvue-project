@@ -6,22 +6,22 @@
                     <legend class="uk-legend">Create your Funvue Account</legend>
                 </div>
                 <div class="uk-margin name">
-                    <input class="uk-input" type="text" placeholder="First name">
+                    <input class="uk-input" type="text" v-model="fname" placeholder="First name">
                 </div>
                 <div class="uk-margin name">
-                    <input class="uk-input" type="text" placeholder="Last name">
+                    <input class="uk-input" type="text" v-model="lname"  placeholder="Last name">
                 </div>
                 <div id="email">
-                    <input class="uk-input" type="text" placeholder="Email address">
+                    <input class="uk-input" type="text" v-model="email" placeholder="Email address">
                 </div>
                 <div class="uk-margin password">
-                    <input class="uk-input" type="text" placeholder="Password">
+                    <input class="uk-input" type="text" v-model="password" placeholder="Password">
                 </div>
                 <div class="uk-margin password">
-                    <input class="uk-input" type="text" placeholder="Confirm password">
+                    <input class="uk-input" type="text" v-model="confirmPassword" placeholder="Confirm password">
                 </div>
                 <vk-button size="small" class="menu-button" type="primary">Cancel</vk-button>
-                <vk-button size="small" class="menu-button" type="primary">Create Account</vk-button>
+                <vk-button size="small" class="menu-button" type="primary" @click="createAccountRequest">Create Account</vk-button>
             </fieldset>
         </form>
     </div>
@@ -41,13 +41,31 @@ export default {
     },
     data () {
         return {
-        msg: 'Welcome to Your Vue.js App'
+            msg: 'Welcome to Your Vue.js App',
+            fname: '',
+            lname: '',
+            password: '',
+            confirmPassword: '',
+            email: ''
         }
     },
     methods: {
-        doSomething() {
-        this.msg= 'another page hahahahahahahaha!';
-        },
+        async createAccountRequest(){
+            const path = 'http://localhost:8000/createAccount';
+            const creds = { fname: this.fname, lname: this.lname, email: this.email, password: this.password};
+            console.log(creds);
+            const response = await axios.post(path, creds)
+            .then((res) => { 
+                // this.mainCards = JSON.parse(JSON.stringify(res.data));
+                console.log(res)
+                // this.generateCards();
+            })
+            .catch((error) => {
+                // eslint-disable-next-line
+                console.error(error);
+            });
+        }
+
     },
 };
 </script>
