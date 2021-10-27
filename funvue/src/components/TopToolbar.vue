@@ -6,7 +6,14 @@
         <vk-button size="small" class="menu-button" type="primary">400</vk-button>
         <vk-button size="small" class="menu-button" type="primary" @click="doSomething">doSomething</vk-button>
         <vk-button size="small" class="menu-button" type="primary" @click="$refs.childModal.showModal()">Login</vk-button>
+        <router-link to="/createaccount">
+          <vk-button size="small" class="menu-button" type="primary">Create Account</vk-button>
+        </router-link>
         <login-modal ref="childModal"></login-modal>
+        <div class="icon-div">
+          <vk-menu id="menu-icon"></vk-menu>
+          <img id="menu-icon2" src="../assets/icons8-menu.svg"/>
+        </div>
     </div>
 
 </template>
@@ -14,13 +21,18 @@
 <script>
 import '@vuikit/theme';
 import { Button, ButtonLink} from '../../node_modules/vuikit/lib/button';
-import LoginModal from './LoginModal.vue'
+import { Icon, IconButton } from '../../node_modules/vuikit/lib/icon';
+import { IconMenu } from '@vuikit/icons'
+import LoginModal from './LoginModal.vue';
 export default {
   name: 'TopToolbar',
   components: {
       LoginModal,
       VkButton: Button,
-      VkButtonLink: ButtonLink
+      VkButtonLink: ButtonLink,
+      VkMenu: IconMenu,
+      VkIcon: Icon,
+      VkIconButton: IconButton
   },
   data () {
     return {
@@ -56,6 +68,10 @@ export default {
   font-weight: 600;
 }
 
+.icon-div{
+  display: none;
+}
+
 .menu-button{
   margin-right: 2%;
 }
@@ -65,4 +81,24 @@ export default {
   font-size: 18px;
 }
 
+@media only screen and (max-width: 650px){
+  .menu-button{
+    display: none;
+  }
+
+  .icon-div{
+    display: block;
+  }
+
+  #menu-icon{
+    width: 20%;
+    height: 30%;
+  }
+  #menu-icon2{
+    width: 5vw;
+    height: 5vh;
+    padding: 2px;
+  }
+
+}
 </style>
