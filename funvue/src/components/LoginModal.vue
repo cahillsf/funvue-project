@@ -11,7 +11,6 @@
              <vk-button @click="checkTestRoute">Check Test Route</vk-button>
              <vk-button @click="deleteCookies">Delete Cookies</vk-button>
             <vk-button @click="submitCreds">Submit</vk-button>
-
         </vk-modal>
     </div>
 </template>
