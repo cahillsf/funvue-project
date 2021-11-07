@@ -14,7 +14,7 @@ db.createUser({
   ],
 });
 db.createCollection('cards');
-db.createCollection('users');
+db.createCollection('users'); //fixme: create an index so handle is unique: https://stackoverflow.com/questions/3298963/how-to-set-a-primary-key-in-mongodb
 
 // var myCards=
 // 	[
