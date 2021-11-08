@@ -9,7 +9,6 @@
                 <p :style="styleObject" id="incorrect">Incorrect password or username</p>
             </form>
              <vk-button @click="checkTestRoute">Check Test Route</vk-button>
-             <vk-button @click="deleteCookies">Delete Cookies</vk-button>
             <vk-button @click="submitCreds">Submit</vk-button>
         </vk-modal>
     </div>
@@ -42,12 +41,16 @@ export default {
   },
   methods: {
     showModal() {
-        console.log("in show modal")
-        this.show=true
+        console.log("in show modal");
+        this.show=true;
     },
     closeModal() {
-        console.log("in close modal")
-        this.show=false
+        console.log("in close modal");
+        this.show=false;
+        this.email= '';
+        this.password= '';
+        this.styleObject.display = 'none';
+
     },
     badCreds(){ 
         console.log("badcredshere");
@@ -55,12 +58,17 @@ export default {
     },
     async submitCreds(){
         const path = 'http://localhost:8000/userAuth';
-        const creds = { email: this.email, password: this.password};
-        // FIXME: secure submission of password to server
-        const response = await axios.post(path, creds, {withCredentials: true})
-        // const response = await axios.post(path, creds)
+        const response = await axios.post(path, {}, 
+          {
+            auth: {
+              username: this.email,
+              password: this.password
+            },
+            withCredentials: true
+          }
+          )
           .then((res) => { 
-            console.log(res)
+            console.log(res);
             this.closeModal();
           })
           .catch((error) => {
@@ -69,12 +77,6 @@ export default {
             this.badCreds();
             // reject(error);
           });
-    },
-    deleteCookies(){
-        console.log("inDeleteCookies")
-        console.log(document.cookie)
-        document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
-
     },
     async checkTestRoute(){
         console.log("inCheckTest")
