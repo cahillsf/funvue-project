@@ -25,7 +25,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 # enable CORS
 # CORS(app, resources={r'/*': {'origins': '*'}})
-CORS(app, origins=["http://localhost:8080", "http://127.0.0.1:8080"], headers=['Content-Type'], expose_headers=['Access-Control-Allow-Origin'], supports_credentials=True)
+CORS(app, origins=["http://localhost:8080"], headers=['Content-Type'], expose_headers=['Access-Control-Allow-Origin'], supports_credentials=True)
 client = pymongo.MongoClient('mongodb://flask-role:toor@localhost:27017/sitecontent?authSource=sitecontent')
 
 
@@ -71,24 +71,21 @@ def all_cards():
 
 @app.route('/userAuth', methods=['POST'])
 def user_auth():
-    json_data = request.json
-    # pull out the credentials from the request- find user by handle
-    # check password
-    # FIXME: secure submission of password to server
     try:
         db = client['sitecontent']
-        result = list(db.users.find({ "handle": json_data['email'] }))
-        if not (json_data['password'] == result[0]['password']):
+        # search user in users collection of sitecontent db
+        result = list(db.users.find({ "handle": request.authorization.username }))
+        # check password
+        if not (request.authorization.password == result[0]['password']):
             return Response("{'Error':'User Not Found or Password Incorrect'}", status=400, mimetype='application/json')
         # encode the JWT with usr handle (email) as sub
         token = encode_auth_token(result[0]['handle'])
         res = make_response("Success", 200)
         res.headers["Content-Type"] = "application/json"
         # print decoded token for debugging purposes
-        print(jwt.decode(token[0],os.getenv('SECRET_KEY'), algorithms=["HS256"]))
-        print(result, file=sys.stderr)
+        print(jwt.decode(token[0],os.getenv('SECRET_KEY'), algorithms=["HS256"]), file=sys.stderr)
+        #  set access token as httpoonly cookie
         res.set_cookie("access_token", value=token[0], expires=token[1], httponly=True)
-        print(res, file=sys.stderr)
         return res
     except Exception as e:
         print(e, file=sys.stderr)
