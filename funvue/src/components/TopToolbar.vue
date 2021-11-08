@@ -6,13 +6,21 @@
         <vk-button size="small" class="menu-button" type="primary">400</vk-button>
         <vk-button size="small" class="menu-button" type="primary" @click="doSomething">doSomething</vk-button>
         <vk-button size="small" class="menu-button" type="primary" @click="$refs.childModal.showModal()">Login</vk-button>
-        <router-link to="/createaccount">
+        <router-link id="create-account" to="/createaccount">
           <vk-button size="small" class="menu-button" type="primary">Create Account</vk-button>
         </router-link>
         <login-modal ref="childModal"></login-modal>
         <div class="icon-div">
-          <vk-menu id="menu-icon"></vk-menu>
-          <img id="menu-icon2" src="../assets/icons8-menu.svg"/>
+          <!-- <vk-menu id="menu-icon"></vk-menu> -->
+          <img @click="showDropdown" id="menu-icon2" src="../assets/icons8-menu.svg"/>
+          <vk-drop position="top-right" mode="click">
+            <vk-navbar-nav-dropdown-nav align="right" navbar-aligned="true" id="nav-dropdown">
+              <vk-nav-item title="Active"></vk-nav-item>
+              <vk-nav-item title="Item"></vk-nav-item>
+              <vk-nav-item title="Item"></vk-nav-item>
+            </vk-navbar-nav-dropdown-nav>
+          <!-- <vk-card>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</vk-card> -->
+          </vk-drop>
         </div>
     </div>
 
@@ -22,7 +30,9 @@
 import '@vuikit/theme';
 import { Button, ButtonLink} from '../../node_modules/vuikit/lib/button';
 import { Icon, IconButton } from '../../node_modules/vuikit/lib/icon';
-import { IconMenu } from '@vuikit/icons'
+import { IconMenu } from '@vuikit/icons';
+import { Drop } from '../../node_modules/vuikit/lib/drop';
+import { NavbarNavItem, NavbarNavDropdownNav } from '../../node_modules/vuikit/lib/navbar';
 import LoginModal from './LoginModal.vue';
 export default {
   name: 'TopToolbar',
@@ -32,7 +42,10 @@ export default {
       VkButtonLink: ButtonLink,
       VkMenu: IconMenu,
       VkIcon: Icon,
-      VkIconButton: IconButton
+      VkIconButton: IconButton,
+      VkDrop: Drop,
+      VkNavItem: NavbarNavItem, 
+      VkNavbarNavDropdownNav: NavbarNavDropdownNav 
   },
   data () {
     return {
@@ -44,6 +57,9 @@ export default {
     doSomething() {
       this.msg= 'TopToolbar!;'
     },
+    showDropdown(){
+      console.log("in show dropdown");
+    }
   },
 };
 </script>
@@ -95,9 +111,25 @@ export default {
     height: 30%;
   }
   #menu-icon2{
+    cursor: pointer;
+    position: relative;
     width: 5vw;
     height: 5vh;
     padding: 2px;
+    right: 3vw;
+  }
+
+  #create-account{
+
+  }
+
+  #nav-dropdown{
+    position: absolute;
+    background: rgb(115, 190, 115);
+    /* width: 20vw;
+    right: 0px; */
+    right: 0px;
+    top: 60px;
   }
 
 }
