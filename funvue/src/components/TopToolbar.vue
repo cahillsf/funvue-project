@@ -12,14 +12,14 @@
         <login-modal ref="childModal"></login-modal>
         <div class="icon-div">
           <!-- <vk-menu id="menu-icon"></vk-menu> -->
-          <img @click="showDropdown" id="menu-icon2" src="../assets/icons8-menu.svg"/>
-          <vk-drop position="top-right" mode="click">
+          <img @click="showDropdown" ref="sandwichIcon" id="menu-icon2" src="../assets/icons8-menu.svg"/>
+          <vk-drop animation="slide-top-small" position="top-right" mode="click" ref="dropMenu">
             <vk-navbar-nav-dropdown-nav align="right" navbar-aligned="true" id="nav-dropdown">
-              <vk-nav-item title="Active"></vk-nav-item>
-              <vk-nav-item title="Item"></vk-nav-item>
-              <vk-nav-item title="Item"></vk-nav-item>
+              <vk-nav-item title="500"></vk-nav-item>
+              <vk-nav-item title="400"></vk-nav-item>
+              <vk-nav-item title="Login"></vk-nav-item>
+              <vk-nav-item title="Create Account"></vk-nav-item>
             </vk-navbar-nav-dropdown-nav>
-          <!-- <vk-card>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</vk-card> -->
           </vk-drop>
         </div>
     </div>
@@ -49,9 +49,16 @@ export default {
   },
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App',
-
+      msg: 'Talk Tungsten 2 Me',
+      dropDisplayed: false,
     }
+  },
+  created(){
+    window.addEventListener("resize", this.trackResize);
+  },
+  destroyed(){
+    window.removeEventListener("resize", this.trackResize);
+
   },
   methods: {
     doSomething() {
@@ -59,6 +66,14 @@ export default {
     },
     showDropdown(){
       console.log("in show dropdown");
+      this.dropDisplayed = (this.dropDisplayed ? false : true);
+    },
+    trackResize(){
+      // console.log(window.innerWidth);
+      if(window.innerWidth > 650 && this.dropDisplayed){
+        this.$refs.sandwichIcon.click();
+        console.log("flipping display")
+      }
     }
   },
 };
@@ -104,6 +119,8 @@ export default {
 
   .icon-div{
     display: block;
+    right: 0;
+    position: absolute;
   }
 
   #menu-icon{
@@ -113,8 +130,8 @@ export default {
   #menu-icon2{
     cursor: pointer;
     position: relative;
-    width: 5vw;
-    height: 5vh;
+    width: 30px;
+    height: 30px;
     padding: 2px;
     right: 3vw;
   }
@@ -125,7 +142,7 @@ export default {
 
   #nav-dropdown{
     position: absolute;
-    background: rgb(115, 190, 115);
+    background: rgb(225, 241, 225);
     /* width: 20vw;
     right: 0px; */
     right: 0px;
