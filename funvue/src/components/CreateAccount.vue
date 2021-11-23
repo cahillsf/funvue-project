@@ -16,11 +16,15 @@
                 </div>
                 <div class="uk-margin password">
                     <input class="uk-input" type="text" v-model="password" placeholder="Password">
-                </div>
+                </div> 
                 <div class="uk-margin password">
                     <input class="uk-input" type="text" v-model="confirmPassword" placeholder="Confirm password">
                 </div>
-                <vk-button size="small" class="menu-button" type="primary">Cancel</vk-button>
+                <div id="home-router" class="menu-button"> 
+                 <router-link to="/">
+                    <vk-button size="small" class="menu-button" type="primary">Cancel</vk-button>
+                 </router-link>
+                </div>
                 <vk-button size="small" class="menu-button" type="primary" @click="createAccountRequest">Create Account</vk-button>
             </fieldset>
         </form>
