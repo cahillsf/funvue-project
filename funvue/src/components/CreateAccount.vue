@@ -20,11 +20,7 @@
                 <div class="uk-margin password">
                     <input class="uk-input" type="text" v-model="confirmPassword" placeholder="Confirm password">
                 </div>
-                <div id="home-router" class="menu-button"> 
-                 <router-link to="/">
-                    <vk-button size="small" class="menu-button" type="primary">Cancel</vk-button>
-                 </router-link>
-                </div>
+                <vk-button size="small" class="menu-button" type="primary" @click="returnToPrevPage">Cancel</vk-button>
                 <vk-button size="small" class="menu-button" type="primary" @click="createAccountRequest">Create Account</vk-button>
             </fieldset>
         </form>
@@ -68,6 +64,9 @@ export default {
                 // eslint-disable-next-line
                 console.error(error);
             });
+        },
+        returnToPrevPage(){
+            this.$router.go(-1);
         }
 
     },
