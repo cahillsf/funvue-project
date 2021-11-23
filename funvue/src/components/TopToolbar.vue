@@ -6,9 +6,7 @@
         <vk-button size="small" class="menu-button" type="primary">400</vk-button>
         <vk-button size="small" class="menu-button" type="primary" @click="doSomething">doSomething</vk-button>
         <vk-button size="small" class="menu-button" type="primary" @click="$refs.childModal.showModal()">Login</vk-button>
-        <router-link id="create-account" to="/createaccount">
-          <vk-button size="small" class="menu-button" type="primary">Create Account</vk-button>
-        </router-link>
+        <vk-button size="small" class="menu-button" type="primary" @click="goToCreateAccount">Create Account</vk-button>
         <login-modal ref="childModal"></login-modal>
         <div class="icon-div">
           <!-- <vk-menu id="menu-icon"></vk-menu> -->
@@ -72,8 +70,11 @@ export default {
       // console.log(window.innerWidth);
       if(window.innerWidth > 650 && this.dropDisplayed){
         this.$refs.sandwichIcon.click();
-        console.log("flipping display")
+        console.log("flipping display");
       }
+    },
+    goToCreateAccount(){
+      this.$router.push({ path: '/createaccount' });
     }
   },
 };
@@ -100,11 +101,14 @@ export default {
 }
 
 .icon-div{
-  display: none;
+  /* display: none; */
+  position: relative;
+  right: -10vw;
 }
 
 .menu-button{
   margin-right: 2%;
+  position: relative;
 }
 
 #welcome{
@@ -112,32 +116,119 @@ export default {
   font-size: 18px;
 }
 
+#menu-icon2{
+  cursor: pointer;
+  position: relative;
+  width: 30px;
+  height: 30px;
+  padding: 2px;
+  right: 3vw;
+}
+@keyframes icon-animate-out {
+    from {
+      right: 0;
+    }
+
+    to {
+      right: -10vw;
+    }
+}
+
+@keyframes icon-animate-in {
+    from {
+      right: -10vw;
+    }
+
+    to {
+      right: 0;
+    }
+}
+
+@keyframes buttons-animate-in {
+    100% {
+      margin-right: 2%;
+      position: relative;
+    }
+
+    50% {
+      left: -10vw;
+      position: relative;
+      opacity: 0.9;
+    }
+    
+    10% {
+      left: -50vw;
+      position: relative;
+      opacity: 0.5;
+    }
+    0% {
+      left: -100vw;
+      position: relative;
+      opacity: 0;
+    }
+}
+
+@keyframes buttons-animate-out {
+    0% {
+      margin-right: 2%;
+      position: relative;
+    }
+
+    10% {
+      left: -10vw;
+      position: relative;
+      opacity: 0.9;
+    }
+    
+    90% {
+      left: -90vw;
+      position: relative;
+      opacity: 0.5;
+    }
+    100% {
+      left: -100vw;
+      position: relative;
+      opacity: 0;
+    }
+}
+
+@media only screen and (min-width: 650px){
+  .icon-div{
+      /* display: none;
+      right: 0;
+      position: absolute; */
+      animation-duration: 1s; 
+      animation-name: icon-animate-out;
+  }
+  .menu-button{
+    /* display: none; */
+    /* top: -50vh; */
+    /* opacity: 0; */
+    animation-duration: 0.7s;
+    animation-name: buttons-animate-in;
+    animation-fill-mode: both;
+
+  }
+  
+}
+
 @media only screen and (max-width: 650px){
   .menu-button{
-    display: none;
+    /* display: none; */
+    /* top: -50vh; */
+    /* opacity: 0; */
+    animation-duration: 0.7s;
+    animation-name: buttons-animate-out;
+    animation-fill-mode: forwards;
+
   }
 
   .icon-div{
     display: block;
     right: 0;
     position: absolute;
-  }
-
-  #menu-icon{
-    width: 20%;
-    height: 30%;
-  }
-  #menu-icon2{
-    cursor: pointer;
-    position: relative;
-    width: 30px;
-    height: 30px;
-    padding: 2px;
-    right: 3vw;
-  }
-
-  #create-account{
-
+    animation-duration: 1s;
+    animation-name: icon-animate-in;
   }
 
   #nav-dropdown{
