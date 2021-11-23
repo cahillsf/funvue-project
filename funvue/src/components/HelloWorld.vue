@@ -36,7 +36,7 @@ export default {
   },
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App',
+      msg: 'Our Flagship Products',
       cardProps: {
         'grid-column': 0,
         'grid-row': 0
