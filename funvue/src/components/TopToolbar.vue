@@ -194,33 +194,22 @@ export default {
 
 @media only screen and (min-width: 650px){
   .icon-div{
-      /* display: none;
-      right: 0;
-      position: absolute; */
       animation-duration: 1s; 
       animation-name: icon-animate-out;
   }
   .menu-button{
-    /* display: none; */
-    /* top: -50vh; */
-    /* opacity: 0; */
     animation-duration: 0.7s;
     animation-name: buttons-animate-in;
     animation-fill-mode: both;
-
   }
   
 }
 
 @media only screen and (max-width: 650px){
   .menu-button{
-    /* display: none; */
-    /* top: -50vh; */
-    /* opacity: 0; */
     animation-duration: 0.7s;
     animation-name: buttons-animate-out;
     animation-fill-mode: forwards;
-
   }
 
   .icon-div{
