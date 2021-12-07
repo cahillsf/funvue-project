@@ -109,6 +109,7 @@ export default {
 .menu-button{
   margin-right: 2%;
   position: relative;
+  /* display: none; */
 }
 
 #welcome{
@@ -189,18 +190,19 @@ export default {
       left: -100vw;
       position: relative;
       opacity: 0;
+      width: 0;
     }
 }
 
 @media only screen and (min-width: 650px){
   .icon-div{
-      animation-duration: 1s; 
-      animation-name: icon-animate-out;
+    animation-duration: 1s; 
+    animation-name: icon-animate-out;
   }
   .menu-button{
     animation-duration: 0.7s;
     animation-name: buttons-animate-in;
-    animation-fill-mode: both;
+    animation-fill-mode: forwards;
   }
   
 }
