@@ -5,10 +5,11 @@
             <vk-modal-title>Login</vk-modal-title> 
             <form>
                 <input class="uk-textarea" type="text"  placeholder="Email" v-model="email">
-                <input class="uk-textarea" type="text" placeholder="Password" v-model="password">
+                <input class="uk-textarea" type="password" placeholder="Password" v-model="password" >
+                <p :style="styleObject" id="incorrect">Incorrect password or username</p>
             </form>
+             <vk-button @click="checkTestRoute">Check Test Route</vk-button>
             <vk-button @click="submitCreds">Submit</vk-button>
-
         </vk-modal>
     </div>
 </template>
@@ -28,30 +29,63 @@ export default {
   },
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App',
-      show: false,
-      email: '',
-      password:''
+        msg: 'Welcome to Your Vue.js App',
+        show: false,
+        email: '',
+        password:'',
+        styleObject: {
+            display: 'none',
+            color:'red'
+        },
     }
   },
   methods: {
     showModal() {
-        console.log("in show modal")
-        this.show=true
+        console.log("in show modal");
+        this.show=true;
     },
     closeModal() {
-        console.log("in close modal")
-        this.show=false
+        console.log("in close modal");
+        this.show=false;
+        this.email= '';
+        this.password= '';
+        this.styleObject.display = 'none';
+
+    },
+    badCreds(){ 
+        console.log("badcredshere");
+        this.styleObject.display = 'inline';
     },
     async submitCreds(){
         const path = 'http://localhost:8000/userAuth';
-        const creds = { email: this.email, password: this.password};
-        console.log(this.email + " and " + this.password)
-        const response = await axios.post(path, creds)
+        const response = await axios.post(path, {}, 
+          {
+            auth: {
+              username: this.email,
+              password: this.password
+            },
+            withCredentials: true
+          }
+          )
           .then((res) => { 
-            // this.mainCards = JSON.parse(JSON.stringify(res.data));
+            console.log(res);
+            this.closeModal();
+          })
+          .catch((error) => {
+            // eslint-disable-next-line
+            console.error(error);
+            this.badCreds();
+            // reject(error);
+          });
+    },
+    async checkTestRoute(){
+        console.log("inCheckTest")
+        const path = 'http://localhost:8000/testRoute';
+        // const response = await axios.post(path, {withCredentials: true})
+        const response = await axios.get(path, {withCredentials: true})
+        // const response = await axios.post(path, creds)
+          .then((res) => { 
             console.log(res)
-            // this.generateCards();
           })
           .catch((error) => {
             // eslint-disable-next-line
@@ -64,5 +98,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 </style>
