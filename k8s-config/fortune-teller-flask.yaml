@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fv-flask
+  labels:
+    tags.datadoghq.com/env: "dev"
+    tags.datadoghq.com/service: "fv-flask"
+    tags.datadoghq.com/version: "0.0.1"
+spec:
+  selector:
+    matchLabels:
+      app: fv-flask
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fv-flask
+        tags.datadoghq.com/env: "dev"
+        tags.datadoghq.com/service: "fv-flask"
+        tags.datadoghq.com/version: "0.0.1"
+      annotations:
+        ad.datadoghq.com/tags: '{"app": "fv-flask","role": "backend", "library":"nodejs"}'
+        ad.datadoghq.com/fv-flask.logs: '[{"source":"python","service":"fv-flask"}]'
+    spec:
+      containers:
+      - name: fv-flask
+        image: cahillsf/fv-flask:0.0.1
+        ports:
+        - containerPort: 8000
+        imagePullPolicy: Always
+        env:
+        - name: DD_ENV
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/env']
+        - name: DEPLOYMENT
+          value: "kubernetes"
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: MONGO_PW
+          value: "toor"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fv-flask-service
+spec:
+  selector:
+    app: fv-flask
+  ports:
+  - port: 8000
+    protocol: TCP
+    targetPort: 8000
+    name: default

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fv-mongo
+  labels:
+    tags.datadoghq.com/env: "dev"
+    tags.datadoghq.com/service: "fv-mongo"
+    tags.datadoghq.com/version: "0.0.1"
+spec:
+  selector:
+    matchLabels:
+      app: fv-mongo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fv-mongo
+        tags.datadoghq.com/env: "dev"
+        tags.datadoghq.com/service: "fv-mongo"
+        tags.datadoghq.com/version: "0.0.1"
+      annotations:
+        ad.datadoghq.com/tags: '{"app": "fv-mongo","role": "db", "library":"mongo"}'
+        ad.datadoghq.com/fvmongo.logs: '[{"source":"mysql","service":"fv-mongo"}]'
+    spec:
+      containers:
+      - name: fv-mongo
+        image: cahillsf/fv-mongo:0.0.1
+        ports:
+        - containerPort: 27017
+        imagePullPolicy: Always
+        env:
+        - name: DD_ENV
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/env']
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: "root"
+        - name:  MONGO_INITDB_ROOT_PASSWORD
+          value: "example"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fv-mongo-service
+spec:
+  selector:
+    app: fv-mongo
+  ports:
+  - port: 27017
+    protocol: TCP
+    targetPort: 27017
+    name: default

@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fv-vue
+  labels:
+    tags.datadoghq.com/env: "dev"
+    tags.datadoghq.com/service: "fv-vue"
+    tags.datadoghq.com/version: "0.0.1"
+spec:
+  selector:
+    matchLabels:
+      app: fv-vue
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fv-vue
+        tags.datadoghq.com/env: "dev"
+        tags.datadoghq.com/service: "fv-vue"
+        tags.datadoghq.com/version: "0.0.1"
+      annotations:
+        ad.datadoghq.com/tags: '{"app": "fv-vue","role": "frontend", "library":"ng"}'
+        ad.datadoghq.com/fv-vue.logs: '[{"source":"nginx","service":"fv-vue"}]'
+    spec:
+      containers:
+      - name: fv-vue
+        image: cahillsf/fv-vue:0.0.1
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always
+        env:
+        - name: DD_ENV
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/env']
+        - name: DEPLOYMENT
+          value: "kubernetes"
+        - name: DD_FV_APP_ID
+          value: "$DD_FT_APP_ID"
+        - name: DD_FV_CLIENT_TOKEN
+          value: "pubecd1d4823887980a4a7c96a476ac55f1"
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fv-vue-service
+spec:
+  selector:
+    app: fv-vue
+  # type: NodePort
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+    name: default
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fvserver
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+            opentracing_tag "service.name" "fvserver-ingress";
+spec:
+  rules:
+    - host: localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: fv-vue-service
+                port:
+                  number: 80
