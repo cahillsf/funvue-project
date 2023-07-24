@@ -57,7 +57,8 @@ export default {
         this.styleObject.display = 'inline';
     },
     async submitCreds(){
-        const path = 'http://localhost:8000/userAuth';
+        const path = this.$hostname + '/userAuth';
+        console.log(this.email)
         const response = await axios.post(path, {}, 
           {
             auth: {
@@ -80,7 +81,7 @@ export default {
     },
     async checkTestRoute(){
         console.log("inCheckTest")
-        const path = 'http://localhost:8000/testRoute';
+        const path = this.$hostname + '/testRoute';
         // const response = await axios.post(path, {withCredentials: true})
         const response = await axios.get(path, {withCredentials: true})
         // const response = await axios.post(path, creds)

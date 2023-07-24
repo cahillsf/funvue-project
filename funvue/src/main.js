@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 
 Vue.config.productionTip = false
+Vue.prototype.$hostname = (window.VUE_APP_BUILD == "kubernetes") ? '/api' : 'http://localhost:8000/api'
 
 /* eslint-disable no-new */
 new Vue({

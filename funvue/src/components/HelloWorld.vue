@@ -84,7 +84,7 @@ export default {
         console.log(this.cards);
       },
       getCards() {
-        const path = 'http://localhost:8000/cards';
+        const path = this.$hostname + '/cards';
         axios.get(path)
           .then((res) => { 
             this.mainCards = JSON.parse(JSON.stringify(res.data));

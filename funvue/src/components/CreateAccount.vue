@@ -51,7 +51,7 @@ export default {
     },
     methods: {
         async createAccountRequest(){
-            const path = 'http://localhost:8000/createAccount';
+            const path = this.$hostname + '/createAccount';
             const creds = { fname: this.fname, lname: this.lname, email: this.email, password: this.password};
             console.log(creds);
             const response = await axios.post(path, creds)
