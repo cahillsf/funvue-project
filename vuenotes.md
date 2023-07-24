@@ -22,6 +22,7 @@ to get idle: `idle` from terminal
 
 https://github.com/tensorflow/tensorboard/issues/1566
 
+- `/bin/bash ./docker_push.sh -t 0.0.1 -r cahillsf -i fv-vue -p ./funvue -d '/Users/stephen.cahill/Desktop/dev-projects/funvue-pr/funvue-project/funvue/Dockerfile-apm'`
 ## Mongodb 
 cd docker-entrypoint-initdb.d
 
@@ -75,7 +76,7 @@ var myCards=
 
 	db.cards.insert(myCards);
 
-
+- `/bin/bash ./docker_push.sh -t 0.0.1 -r cahillsf -i fv-mongo -p ./mongo-db -d '/Users/stephen.cahill/Desktop/dev-projects/funvue-pr/funvue-project/mongo-db/Dockerfile'`
 ## ToDo
 
 * better routing--> can i create a router-link within a different element?
