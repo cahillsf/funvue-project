@@ -41,6 +41,12 @@ spec:
               fieldPath: status.hostIP
         - name: MONGO_PW
           value: "toor"
+        - name: SECRET_KEY
+          value: "d9d19f6a8d6317fe5cc8e81cfd2387c7"
+        - name: DD_TRACE_DEBUG
+          value: "true"
+        - name: DD_TRACE_STARTUP_LOGS
+          value: "true"
 ---
 apiVersion: v1
 kind: Service
