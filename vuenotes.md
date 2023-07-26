@@ -13,10 +13,10 @@ git push -u origin main
 ## Flask App
 from /Users/scahill/Desktop/funvue-project/flask-server
 - activate virtual environment: `source .venv/bin/activate`
-
+- install deps: `python3.9 -m pip install -r requirements.txt`
 run the app:
-- python app.py
-- ddtrace-run python app.py
+- python3.9 app.py
+- ddtrace-run python3.9 app.py
 
 to get idle: `idle` from terminal
 
@@ -85,3 +85,16 @@ var myCards=
 
 * hide dropdown menu after user has returned to full page view so that when the browser size is reduced below the breakpoint, it will not be visible
 
+
+
+2023-07-25 21:20:15] [init] Using Kubernetes version: v1.26.0
+[2023-07-25 21:20:15] [preflight] Running pre-flight checks
+[2023-07-25 21:20:20] error execution phase preflight: [preflight] Some fatal errors occurred:
+[2023-07-25 21:20:20]   [ERROR NumCPU]: the number of available CPUs 1 is less than the required 2
+[2023-07-25 21:20:20] [preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+
+
+### locust for load testing
+- https://github.com/deliveryhero/helm-charts/tree/master/stable/locust
+- https://docs.locust.io/en/1.5.2/running-locust-docker.html
+- `docker-compose up --scale worker=4`

@@ -16,7 +16,7 @@
   - activate your local interpreter and run:
   ```
   >>> import secrets
-  >>> secrets.toxen_hex(16)
+  >>> secrets.token_hex(16)
   ```
   - export the resulting secret key `export SECRET_KEY='<SECRET_KEY>'`
 
@@ -37,9 +37,67 @@
 * Vue cli - https://cli.vuejs.org/
 
 --- 
-## Deploy in Self-Managed AWS K8s Cluster
-- 
+## Deploy in Self-Managed AWS K8s Cluster w/CAPI and CAPA
+- based off of the [quickstart instructions](https://cluster-api.sigs.k8s.io/user/quick-start.html) for reference
+- please review the [prereqs](https://cluster-api.sigs.k8s.io/user/quick-start.html#common-prerequisites) and install prior to moving forward 
 
+### Create a local kind management cluster
+- clone this repository and `cd` into the root directory
+- run: `kind create cluster --config ./capi/kind-cluster-with-extramounts.yaml -n capm`
+
+#### Set up the required AWS variables and credentials
+- for this example I will be using [aws-vault](https://github.com/99designs/aws-vault) to securely manage my user credentials.  Replace <TARGET_PROFILE> with your intended profile in the envvar exports
+- you will also need to [create an ssh key](https://cluster-api-aws.sigs.k8s.io/topics/using-clusterawsadm-to-fulfill-prerequisites.html#create-a-new-key-pair) for the EC2s we will be provisioning as nodes (replace <SSH_KEY> with your key name)
+- create the following vars:
+  ```
+  export AWS_REGION=us-east-2
+  export AWS_CONTROL_PLANE_MACHINE_TYPE=t2.small
+  export AWS_NODE_MACHINE_TYPE=t2.small
+  export AWS_SSH_KEY_NAME=<SSH_KEY>
+  export X_AWS_PROFILE=<TARGET_PROFILE>
+  export AWS_B64ENCODED_CREDENTIALS=$(aws-vault exec $X_AWS_PROFILE -- clusterawsadm bootstrap credentials encode-as-profile)
+  ```
+
+#### Initialize your local kind cluster to be used as a managament cluster
+- run `clusterctl init --infrastructure aws`
+
+### Deploy the workload cluster
+- `kubectl apply -f capi-quickstart.yaml`
+- this template was based off of the following cluster template with some modifications:
+  ```
+  clusterctl generate cluster capi-quickstart \
+  --kubernetes-version v1.26.0 \
+  --control-plane-machine-count=1 \
+  --worker-machine-count=1 \
+  --infrastructure=aws:v2.0.2 \
+  > capi-quickstart.yaml
+  ```
+  - these modifications include:
+    - ignoring preflight error messages from kubeadm to launch the cluster with fewer resources (CPU/Mem) than Kubeadm would typically allow.  We are launching this cluster with small instances to minimize costs
+    - adding additional block storage to avoid node `DiskPressure` conditions
+
+### Configure the workload cluster
+- export the kubeconfig: `clusterctl get kubeconfig capi-quickstart > capi-quickstart.kubeconfig`
+- install the out of tree cloud provider:
+  ```
+  helm repo add aws-cloud-controller-manager https://kubernetes.github.io/cloud-provider-aws
+  helm repo update
+  helm upgrade --install aws-cloud-controller-manager --kubeconfig=./capi-quickstart.kubeconfig aws-cloud-controller-manager/aws-cloud-controller-manager
+  ```
+- install the AWS k8s CNI provider: `kubectl apply --kubeconfig=./capi-quickstart.kubeconfig -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/master/config/master/aws-k8s-cni.yaml`
+
+### Credentials Management
+- using aws-vault you will receive a short-lived session token from STS, if the session token is expired and you attempt to perform changes to your AWS clusters, you will see errors like the following from your `capa-controller-manager`:
+  - `status code: 400, request id: <ID>, ExpiredTokenException: The security token included in the request is expired`
+- this means the token must be refreshed, here is how this can be accomplished:
+  - regenerate the b64 encoded credentials: `export AWS_B64ENCODED_CREDENTIALS=$(aws-vault exec $X_AWS_PROFILE -- clusterawsadm bootstrap credentials encode-as-profile)`
+  - `clusterawsadm controller update-credentials --namespace capa-system `
+  - restart the `capa-controller-manager` deployment: `kubectl -n capa-system rollout restart deployment capa-controller-manager`
+- note: this is for development use only, there is a way to [use IAM roles for management clusters](https://cluster-api-aws.sigs.k8s.io/topics/using-iam-roles-in-mgmt-cluster.html?highlight=credentials%20managemen#using-iam-roles-in-management-cluster-instead-of-aws-credentials) deployed in AWS
+
+### Cleanup
+- delete the workload cluster: `kubectl delete cluster capi-quickstart`
+  - wait for this command to return, you can check the progress of the resource deletion by watching the logs from the `capa-controller-manager` manager pod
 ---
 ### Push your own images
 - the k8s resources by default are set to pull the images from my dockerhub repo `cahillsf`.  If you'd like to build and push your own images, you can use the helper shell script `docker_push.sh` to do so
