@@ -10,7 +10,7 @@ class Config(object):
     def DATABASE_URI(self):  # Note: all caps
         if self.DB_SERVER == 'mongod-0.mongodb-service.default.svc.cluster.local:27017':
             return f"mongodb://flask-role:{self.PW}@{self.DB_SERVER}/sitecontent?authSource=sitecontent&replicaSet=MainRepSet"
-        return f"mongodb://flask-role:{self.PW}@{self.DB_SERVER}:27017/sitecontent?authSource=admin"
+        return f"mongodb://flask-role:{self.PW}@{self.DB_SERVER}:27017/sitecontent?authSource=sitecontent"
 
 class localConfig(Config):
     DB_SERVER = 'localhost'

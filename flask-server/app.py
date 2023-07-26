@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request, Response, make_response
 from flask_cors import CORS
-from ddtrace import Pin, patch
 import pymongo
 from pprint import pprint
 import sys
@@ -9,16 +8,18 @@ import logging
 import datetime
 import os
 import werkzeug
-from ddtrace import config, patch_all, Pin, patch, tracer
+from ddtrace import config, patch_all, patch
 #import ddtrace.profiling.auto
 # from ddtrace.profiling.profiler import Profiler
 
 config.env = "dev"      # the environment the application is in
-config.service = "flask-server"  # name of your application
+config.service = "fv-flask"  # name of your application
 config.version = "0.0.1"  # version of your application
 patch(logging=True)
 patch_all()
 
+class NoSecretKey(Exception):
+    pass
 # configuration
 DEBUG = True
 # prof = Profiler(
@@ -54,8 +55,10 @@ def encode_auth_token(usr_id):
     # https://www.bacancytechnology.com/blog/flask-jwt-authentication
     # secret_key is set via the above link secrets.token_hex(16)
     # FIXME: when containerizing, this will have to be dynamically generated
-    print("encoding auth token", file=sys.stderr)
+    app.logger.info("encoding auth token")
     secret_key = os.getenv('SECRET_KEY')
+    if (secret_key == None):
+        raise NoSecretKey("no secret key provided to encode JWT")
     print(secret_key, file=sys.stderr)
     try:
         exp = datetime.datetime.utcnow() + datetime.timedelta(days=1, seconds=5)
@@ -94,11 +97,18 @@ def all_cards():
 
 @app.route('/api/userAuth', methods=['POST'])
 def user_auth():
+    
     try:
         db = client['sitecontent']
         # search user in users collection of sitecontent db
         result = list(db.users.find({ "handle": request.authorization.username }))
-        logging.info("result from db.users.find is {}".format(result))
+        # # reslist = list(result)
+        # app.logger.info("list is: {}".format(reslist))
+            
+        # result = list(db.users.find({ "handle": request.authorization.username }))
+        for document in enumerate(result):
+            app.logger.info("document is: {}".format(document))
+
         # check password
         if not (request.authorization['password'] == result[0]['password']):
             print("strings dont match, erroring out", file=sys.stderr)
@@ -115,7 +125,7 @@ def user_auth():
         return res
     except Exception as e:
         # print(e, file=sys.stderr)
-        logging.error("exception occurred in user auth: {}".format(e))
+        app.logger.error("exception occurred in user auth", exc_info=True)
         return Response("{'Error':'User Not Found or Password Incorrect'}", status=400, mimetype='application/json')
 
 #debug route to check if the access_token is being sent in client response
