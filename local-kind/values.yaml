@@ -57,7 +57,7 @@ datadog:
   leaderElection: true
   logs:
     enabled: true
-    containerCollectAll: false
+    containerCollectAll: true
     containerCollectUsingFiles: true
   env: 
     - name: DD_TELEMETRY_ENABLED

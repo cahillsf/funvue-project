@@ -4,7 +4,7 @@ name: fv-kind
 nodes:
   - role: control-plane
     extraMounts:
-      - hostPath: /Users/stephen.cahill/Desktop/dev-projects/funvue-pr/funvue-project/fortune-teller-mysql
+      - hostPath: /Users/stephen.cahill/Desktop/dev-projects/funvue-pr/funvue-project/local-kind/fortune-teller-mysql
         containerPath: /mount
     kubeadmConfigPatches:
     - |
