@@ -1,0 +1,11 @@
+loadtest:
+  name: locust
+  locust_locustfile: locustfile.py
+  locust_locustfile_configmap: "my-loadtest-locustfile"
+  headless: true
+  locust_host: http://fv-flask-service:8000
+  environment:
+    LOCUST_USERS: 100
+    SPAWN_RATE: 5
+    # RUN_TIME: 
+    LOCUST_PRINT_STATS: true

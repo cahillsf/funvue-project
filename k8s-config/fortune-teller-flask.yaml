@@ -28,6 +28,13 @@ spec:
         ports:
         - containerPort: 8000
         imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
         env:
         - name: DD_ENV
           valueFrom:

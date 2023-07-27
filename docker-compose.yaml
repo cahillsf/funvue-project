@@ -1,25 +1,23 @@
 version: '3'
 services:
-    # ddagent:
-    #   image: datadog/agent:latest
-    #   container_name: datadog-agent-ft
-    #   env_file:
-    #     - ~/sandbox.docker.env
-    #   environment:
-    #     - DD_APM_ENABLED=true
-    #     - DD_LOGS_ENABLED=true
-    #     - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
-    #     - DD_APM_NON_LOCAL_TRAFFIC=true
-    #     - DD_AC_EXCLUDE=name:datadog-agent-ft
-    #   volumes: 
-    #     - /var/run/docker.sock:/var/run/docker.sock:ro
-    #     - /proc/:/host/proc/:ro
-    #     - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
-    #   ports:
-    #     - "8126:8126"
-    #   restart: on-failure
-    #   depends_on: 
-    #     - mysql_db
+    ddagent:
+      image: datadog/agent:latest
+      container_name: datadog-agent-fv
+      env_file:
+        - ~/sandbox.docker.env
+      environment:
+        - DD_APM_ENABLED=true
+        - DD_LOGS_ENABLED=true
+        - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+        - DD_APM_NON_LOCAL_TRAFFIC=true
+        # - DD_AC_EXCLUDE=name:datadog-agent-ft
+      volumes: 
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+        - /proc/:/host/proc/:ro
+        - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      ports:
+        - "8126:8126"
+      restart: on-failure
     master:
       image: locustio/locust
       ports:
@@ -47,16 +45,17 @@ services:
     #     com.datadoghq.ad.instances: '[{"server": "%%host%%", "user": "datadog","pass": "tacosandburritos"}]'
       ports:
         - '27017:27017'
-    # express_server:
-    #   build:
-    #     dockerfile: Dockerfile
-    #     context: ./fortune-teller-express
-    #   depends_on: 
-    #     - mysql_db
-    #   environment: 
-    #     - DD_AGENT_HOST=datadog-agent-ft
-    #   ports:
-    #     - '8080:8080'
+    flask_server:
+      build:
+        dockerfile: Dockerfile
+        context: ./flask-server
+      environment: 
+        - DD_AGENT_HOST=datadog-agent-ft
+        - DEPLOYMENT=docker
+        - MONGO_PW=toor
+        - SECRET_KEY=d9d19f6a8d6317fe5cc8e81cfd2387c7
+      ports:
+        - '8000:8000'
     # angular_web:
     #   build:
     #     dockerfile: Dockerfile
