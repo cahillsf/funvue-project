@@ -10,7 +10,6 @@ spec:
   selector:
     matchLabels:
       app: fv-flask
-  replicas: 1
   template:
     metadata:
       labels:
@@ -67,3 +66,17 @@ spec:
     protocol: TCP
     targetPort: 8000
     name: default
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: fv-flask-hpa
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    apiVersion: apps/v1
+    name: fv-flask
+  minReplicas: 1
+  maxReplicas: 12
+  targetCPUUtilizationPercentage: 85

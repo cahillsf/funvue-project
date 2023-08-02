@@ -7,4 +7,5 @@ kubectl create secret generic $DATADOG_API_SECRET_NAME --from-literal api-key=$D
 kubectl create configmap my-loadtest-locustfile --from-file ../locust-loadtest/locustfile.py
 helm install ddagent -f dd-values.yaml  --set datadog.apiKeyExistingSecret=datadog-api-secret datadog/datadog
 helm install locust deliveryhero/locust -f locust-values.yaml
+helm install metrics-server metrics-server/metrics-server -f metrics-server-values.yaml
 kubectl apply -f ../k8s-config -R

@@ -3,9 +3,24 @@ loadtest:
   locust_locustfile: locustfile.py
   locust_locustfile_configmap: "my-loadtest-locustfile"
   headless: true
+  # autostart: true
   locust_host: http://fv-flask-service:8000
   environment:
-    LOCUST_USERS: 100
-    SPAWN_RATE: 5
+    # at 900 users with this spawn rate, my local kind cluster runs out of CPU to continue scaling out locust-worker and flask-server pods
+    LOCUST_USERS: 1000
+    SPAWN_RATE: 50
     # RUN_TIME: 
     LOCUST_PRINT_STATS: true
+worker:
+  hpa:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 85
+  resources: 
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 500m
+      memory: 256Mi

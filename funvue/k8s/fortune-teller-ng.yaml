@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       app: fv-vue
-  replicas: 5
+  replicas: 1
   template:
     metadata:
       labels:
@@ -28,13 +28,6 @@ spec:
         ports:
         - containerPort: 80
         imagePullPolicy: Always
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "250m"
-          limits:
-            memory: "256Mi"
-            cpu: "500m"
         env:
         - name: DD_ENV
           valueFrom:
@@ -43,7 +36,7 @@ spec:
         - name: DEPLOYMENT
           value: "kubernetes"
         - name: DD_FV_APP_ID
-          value: "$DD_FT_APP_ID"
+          value: "bf97d17c-15d9-43f7-9058-2929c414755a"
         - name: DD_FV_CLIENT_TOKEN
           value: "pubecd1d4823887980a4a7c96a476ac55f1"
         - name: DD_AGENT_HOST
