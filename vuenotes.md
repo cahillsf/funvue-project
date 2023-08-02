@@ -98,3 +98,19 @@ var myCards=
 - https://github.com/deliveryhero/helm-charts/tree/master/stable/locust
 - https://docs.locust.io/en/1.5.2/running-locust-docker.html
 - `docker-compose up --scale worker=4`
+
+---
+- kind get kubeconfig -n capd > mgmt.kubeconfig
+- for workload cluster autoscaler: `kubectl create configmap mgmt-kube --from-file=mgmt.kubeconfig --kubeconfig=./capi-quickstart.kubeconfig -n kube-system`
+
+- swap out the server address host in the kubeconfig to resolve to `host.docker.internal` for docker deployment
+- for mgmt cluster autoscaler: `kubectl create configmap wkld-kube --from-file=capi-quickstart.kubeconfig -n kube-system`
+- in mgmt cluster: `k apply -f /Users/stephen.cahill/Desktop/dev-projects/funvue-pr/funvue-project/local-kind/autoscaler.yaml`
+
+
+  export AWS_REGION=us-east-2
+  export AWS_CONTROL_PLANE_MACHINE_TYPE=m4.large
+  export AWS_NODE_MACHINE_TYPE=m4.large
+  export AWS_SSH_KEY_NAME=aws-ec2
+  export X_AWS_PROFILE=cahillsf-account-admin
+  export AWS_B64ENCODED_CREDENTIALS=$(aws-vault exec $X_AWS_PROFILE -- clusterawsadm bootstrap credentials encode-as-profile)

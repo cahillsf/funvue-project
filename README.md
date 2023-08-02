@@ -51,8 +51,8 @@
 - create the following vars:
   ```
   export AWS_REGION=us-east-2
-  export AWS_CONTROL_PLANE_MACHINE_TYPE=t2.small
-  export AWS_NODE_MACHINE_TYPE=t2.small
+  export AWS_CONTROL_PLANE_MACHINE_TYPE=m4.large
+  export AWS_NODE_MACHINE_TYPE=m4.large
   export AWS_SSH_KEY_NAME=<SSH_KEY>
   export X_AWS_PROFILE=<TARGET_PROFILE>
   export AWS_B64ENCODED_CREDENTIALS=$(aws-vault exec $X_AWS_PROFILE -- clusterawsadm bootstrap credentials encode-as-profile)
@@ -60,9 +60,10 @@
 
 #### Initialize your local kind cluster to be used as a managament cluster
 - run `clusterctl init --infrastructure aws`
-
+- `aws:v2.0.2`
 ### Deploy the workload cluster
-- `kubectl apply -f capi-quickstart.yaml`
+- `kubectl apply -f ./capi/capi-quickstart.yaml`
+
 - this template was based off of the following cluster template with some modifications:
   ```
   clusterctl generate cluster capi-quickstart \
@@ -75,7 +76,7 @@
   - these modifications include:
     - ignoring preflight error messages from kubeadm to launch the cluster with fewer resources (CPU/Mem) than Kubeadm would typically allow.  We are launching this cluster with small instances to minimize costs
     - adding additional block storage to avoid node `DiskPressure` conditions
-
+- it will take some time for the CAPA controller to provision the workload cluster, you can check the progress by running `clusterctl describe cluster capi-quickstart` 
 ### Configure the workload cluster
 - export the kubeconfig: `clusterctl get kubeconfig capi-quickstart > capi-quickstart.kubeconfig`
 - install the out of tree cloud provider:
@@ -84,14 +85,17 @@
   helm repo update
   helm upgrade --install aws-cloud-controller-manager --kubeconfig=./capi-quickstart.kubeconfig aws-cloud-controller-manager/aws-cloud-controller-manager
   ```
-- install the AWS k8s CNI provider: `kubectl apply --kubeconfig=./capi-quickstart.kubeconfig -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/master/config/master/aws-k8s-cni.yaml`
+
+- install the AWS k8s CNI provider: `kubectl --kubeconfig=./capi-quickstart.kubeconfig apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/master/config/master/aws-k8s-cni.yaml`
+
+### Deploy the workload
 
 ### Credentials Management
 - using aws-vault you will receive a short-lived session token from STS, if the session token is expired and you attempt to perform changes to your AWS clusters, you will see errors like the following from your `capa-controller-manager`:
   - `status code: 400, request id: <ID>, ExpiredTokenException: The security token included in the request is expired`
 - this means the token must be refreshed, here is how this can be accomplished:
   - regenerate the b64 encoded credentials: `export AWS_B64ENCODED_CREDENTIALS=$(aws-vault exec $X_AWS_PROFILE -- clusterawsadm bootstrap credentials encode-as-profile)`
-  - `clusterawsadm controller update-credentials --namespace capa-system `
+  - `clusterawsadm controller update-credentials --namespace capa-system`
   - restart the `capa-controller-manager` deployment: `kubectl -n capa-system rollout restart deployment capa-controller-manager`
 - note: this is for development use only, there is a way to [use IAM roles for management clusters](https://cluster-api-aws.sigs.k8s.io/topics/using-iam-roles-in-mgmt-cluster.html?highlight=credentials%20managemen#using-iam-roles-in-management-cluster-instead-of-aws-credentials) deployed in AWS
 
